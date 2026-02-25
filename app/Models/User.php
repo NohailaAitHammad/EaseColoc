@@ -55,7 +55,15 @@ class User extends Authenticatable
 
     public function colocations() : BelongsToMany
     {
-        return $this->belongsToMany(Colocation::class)->as('membership')->withPivot('role', 'joined_at', 'left_at')->withTimestamps()->using(Membership::class);
+        return $this->belongsToMany(Colocation::class, 'memberships', 'user_id', 'colocation_id')->as('membership')->withPivot('role', 'joined_at', 'left_at')->withTimestamps()->using(Membership::class);
+    }
+    public function depenses_a_paye() : BelongsToMany
+    {
+       return $this->belongsToMany(Depense::class, 'depense_user', 'User_id', 'depense_id')
+       ->withTimestamps()
+           ->withPivot('montant_du', 'montant_paye')
+           ->using(depense_user::class);
+
     }
 
     public function invitations() : HasMany

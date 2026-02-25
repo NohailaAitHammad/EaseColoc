@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategorieController;
+use App\Http\Controllers\ColocationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // categories
     Route::resource('categories', CategorieController::class);
+    Route::resource('colocations', ColocationController::class);
+
 });
 
 require __DIR__.'/auth.php';

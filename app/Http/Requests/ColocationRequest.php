@@ -11,7 +11,7 @@ class ColocationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class ColocationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nom' => ['required', 'string', 'max:255'],
+            'max_membres' => ['required', 'integer', 'max:5'],
         ];
     }
 }

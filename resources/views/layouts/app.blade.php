@@ -8,6 +8,9 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet"
     />
+    @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
+
     <link rel="stylesheet" href="./assets/css/tailwind.output.css" />
     <script
         src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
@@ -219,7 +222,7 @@
                                 <li class="flex">
                                     <a
                                         class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                                        href="#"
+                                        href="{{ route('profile.edit') }}"
                                     >
                                         <svg
                                             class="w-4 h-4 mr-3"
@@ -291,6 +294,7 @@
         </header>
         <main class="h-full overflow-y-auto">
             @yield('content')
+
         </main>
     </div>
 </div>

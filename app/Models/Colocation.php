@@ -11,12 +11,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Colocation extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
     protected $fillable =['nom', 'max_membre'];
 
     public function users() : BelongsToMany
     {
-        return $this->belongsToMany(User::class)->as('membership')->withPivot('role', 'joined_at', 'left_at')->withTimestamps()->using(Membership::class);
+        return $this->belongsToMany(User::class, 'memberships', 'colocation_id', 'user_id')->as('membership')->withPivot('role', 'joined_at', 'left_at')->withTimestamps()->using(Membership::class);
+    }
+
+    public function owner()
+    {
+        return $this->users()
+            ->wherePivot('role', 'owner');
     }
     public function depenses() : HasMany
     {
