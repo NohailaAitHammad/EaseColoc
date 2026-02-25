@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ColocationRequest;
 use App\Models\Colocation;
-use Illuminate\Http\Request;
+use Illuminate\Http\CategorieRequest;
 
 class ColocationController extends Controller
 {
@@ -52,7 +52,7 @@ class ColocationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CategorieRequest $request, string $id)
     {
         //
     }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Http\CategorieRequest;
 
 class DepenseController extends Controller
 {
@@ -25,7 +25,7 @@ class DepenseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CategorieRequest $request)
     {
         //
     }
@@ -49,7 +49,7 @@ class DepenseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CategorieRequest $request, string $id)
     {
         //
     }

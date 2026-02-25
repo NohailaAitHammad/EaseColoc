@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CategorieRequest;
 use App\Models\Categorie;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 
 class CategorieController extends Controller
 {
@@ -21,15 +23,17 @@ class CategorieController extends Controller
      */
     public function create()
     {
-        //
+        return view('categories.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CategorieRequest $request)
     {
-        //
+        $validatedCategorie = $request->validated();
+        Categorie::create($validatedCategorie);
+        return redirect()->route('dashboard')->with("success", 'Catégorie bien cree');
     }
 
     /**
@@ -43,24 +47,27 @@ class CategorieController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Categorie $categorie)
     {
-        //
+        return view('categories.edit', compact('categorie'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CategorieRequest $request, Categorie $categorie)
     {
-        //
+        $validatedCategorie = $request->validated();
+        $categorie->save($validatedCategorie);
+        return redirect()->route('dashboard')->with('success', 'Catégorie Bien modifier');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Categorie $categorie)
     {
-        //
+        $categorie->delete();
+        return redirect()->route('dashboard')->with('success', 'Catégorie bien supprimer');
     }
 }
