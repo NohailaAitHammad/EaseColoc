@@ -12,13 +12,16 @@ use Illuminate\Queue\SerializesModels;
 class InvitationAuColocation extends Mailable
 {
     use Queueable, SerializesModels;
+    private string $email = '';
+    private string $token = '';
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($email, $token)
     {
-        //
+        $this->email = $email;
+        $this->token = $token;
     }
 
     /**
@@ -36,10 +39,11 @@ class InvitationAuColocation extends Mailable
      */
     public function content(): Content
     {
-        $body = 'hello';
+        $email = $this->email;
+        $token = $this->token;
         return new Content(
-            view: 'view.name',
-        with:compact('body'),
+            view: 'invitations.index',
+        with:compact('email', 'token'),
         );
     }
 

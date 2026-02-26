@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Invitation extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable = ['email', 'token'];
+    protected $fillable = ['email', 'token', 'status', 'user_id'];
 
     public function user() : BelongsTo
     {

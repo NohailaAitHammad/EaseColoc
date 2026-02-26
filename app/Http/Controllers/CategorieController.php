@@ -33,7 +33,7 @@ class CategorieController extends Controller
     {
         $validatedCategorie = $request->validated();
         Categorie::create($validatedCategorie);
-        return redirect()->route('dashboard')->with("success", 'Catégorie bien cree');
+        return redirect()->route('categories.index')->with("success", 'Catégorie bien cree');
     }
 
     /**
@@ -59,7 +59,7 @@ class CategorieController extends Controller
     {
         $validatedCategorie = $request->validated();
         $categorie->save($validatedCategorie);
-        return redirect()->route('dashboard')->with('success', 'Catégorie Bien modifier');
+        return redirect()->route('categories.index')->with('success', 'Catégorie Bien modifier');
     }
 
     /**
@@ -68,6 +68,6 @@ class CategorieController extends Controller
     public function destroy(Categorie $categorie)
     {
         $categorie->delete();
-        return redirect()->route('dashboard')->with('success', 'Catégorie bien supprimer');
+        return redirect()->route('categories.index')->with('success', 'Catégorie bien supprimer');
     }
 }

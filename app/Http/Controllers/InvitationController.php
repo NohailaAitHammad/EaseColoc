@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\CategorieRequest;
+use App\Http\Requests\InvitationRequest;
+use App\Mail\InvitationAuColocation;
+use App\Models\Invitation;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
 
 class InvitationController extends Controller
 {
@@ -11,7 +16,7 @@ class InvitationController extends Controller
      */
     public function index()
     {
-        //
+        //return view('invitations.index');
     }
 
     /**
@@ -19,15 +24,37 @@ class InvitationController extends Controller
      */
     public function create()
     {
-        //
+//        Mail::raw('Test', function ($message) {
+//            $message->to('test@test.com')
+//                ->subject('Test');
+//        });
+        //dd(config('mail.mailers.smtp'));
+
+        //dd($mailer->content());
+        return view('invitations.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CategorieRequest $request)
+    public function store(InvitationRequest $request)
     {
-        //
+        $validatedInvitation = $request->validated();
+        $validatedInvitation["status"] = 'pending';
+        $validatedInvitation["token"] = '124635';
+        $validatedInvitation['user_id'] = auth()->id();
+        $dd = Crypt::encryptString($validatedInvitation['email']);
+        $c = ['email' => $validatedInvitation['email'],
+            'colocation_id' => $validatedInvitation['user_id']];
+        $d = json_encode($c, JSON_THROW_ON_ERROR);
+        $validatedInvitation['token'] = encrypt($d);
+        //dd($validatedInvitation['token']);
+
+        $mailer = new InvitationAuColocation($validatedInvitation['email'], $validatedInvitation['token']);
+        //dd($mailer);
+        Mail::to('aythmadnhylt@gmail.com', )->send($mailer);
+        Invitation::create($validatedInvitation);
+        return redirect()->route('colocations.index');
     }
 
     /**
