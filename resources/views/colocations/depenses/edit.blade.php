@@ -23,9 +23,9 @@
                             <x-input-error :messages="$errors->get('montant')" class="mt-2" />
                         </div>
                         <div>
-                            <select id="categorie" name="categorie">
-                                @foreach($categories as $categorie)
-                                    <option value="{{$categorie->id}}"> {{ $categorie->nom }}</option>
+                            <select id="category" name="category">
+                                @foreach($categories as $category)
+                                    <option value="{{$category->id}}"> {{ $category->nom }}</option>
                                 @endforeach
                             </select>
                         </div>

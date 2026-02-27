@@ -9,7 +9,7 @@
                 </h2>
 
                 <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-                    <form action="{{ route('categories.store') }}" method="POST">
+                    <form action="{{ route('colocations.categories.store', $colocation) }}" method="POST">
                         @csrf
                         <div>
                             <x-input-label for="nom" :value="__('Nom de Categorie')" />
@@ -21,7 +21,7 @@
                             <button type="submit" class="px-10 py-2 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
                                 Enregistrer
                             </button>
-                            <a href="{{ route('categories.index')}}" type="submit" class="px-10 py-2 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                            <a href="{{ route('colocations.categories.index', $colocation)}}" type="submit" class="px-10 py-2 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
                                 Annuler
                             </a>
                         </div>

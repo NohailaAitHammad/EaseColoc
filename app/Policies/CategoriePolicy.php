@@ -32,8 +32,8 @@ class CategoriePolicy
     {
         return $colocation->users()
                 ->where('user_id', $user->id)
-                ->wherePivot('role', 'owner')
-                ->exists() && $colocation->status === 'active' ;
+                ->exists()
+            && $colocation->status === 'active';
     }
 
     /**
@@ -41,7 +41,7 @@ class CategoriePolicy
      */
     public function update(User $user, Categorie $categorie): bool
     {
-        return $categorie->user_id === $user->id;
+        return $user->id === $categorie->user_id;
     }
 
     /**
@@ -49,7 +49,7 @@ class CategoriePolicy
      */
     public function delete(User $user, Categorie $categorie): bool
     {
-        return  $categorie->user_id === $user->id;
+        return $user->id === $categorie->user_id;
     }
 
     /**

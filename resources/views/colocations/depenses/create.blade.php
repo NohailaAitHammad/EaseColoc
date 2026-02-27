@@ -32,8 +32,8 @@
                             <x-input-label for="categorie_id" :value="__('Categorie')" />
 
                             <select id="categorie_id" name="categorie_id">
-                                @foreach($categories as $categorie)
-                                    <option value="{{$categorie->id}}"> {{ $categorie->nom }}</option>
+                                @foreach($categories as $category)
+                                    <option value="{{$category->id}}"> {{ $category->nom }}</option>
                                 @endforeach
                             </select>
                         </div>

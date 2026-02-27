@@ -7,13 +7,20 @@
                 <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
                     Modifier  Categorie
                 </h2>
+                @if ($errors->any())
+                    <div class="bg-red-200 p-2">
+                        @foreach ($errors->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
                 <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-                    <form action="{{ route('categories.update', $categorie)}}" method="POST">
+                    <form action="{{ route('colocations.categories.update',[$colocation, $category])}}" method="POST">
                         @csrf
                         @method('PUT')
                         <div>
                             <x-input-label for="nom" :value="__('Nom de Categorie')" />
-                            <x-text-input id="nom" class="block mt-1 w-full" type="text" name="nom" :value="$categorie->nom" required autofocus autocomplete="nom" />
+                            <x-text-input id="nom" class="block mt-1 w-full" type="text" name="nom" :value="$category->nom" required autofocus autocomplete="nom" />
                             <x-input-error :messages="$errors->get('nom')" class="mt-2" />
                         </div>
 

@@ -15,7 +15,8 @@ class DepenseController extends Controller
      */
     public function index(Colocation $colocation)
     {
-        $depenses = $colocation->depenses();
+        $depenses = $colocation->depenses;
+        //dd($depenses);
         return view('colocations.depenses.index', compact('colocation','depenses'));
     }
 
@@ -24,7 +25,7 @@ class DepenseController extends Controller
      */
     public function create(Colocation $colocation)
     {
-        $categories = Categorie::all();
+       $categories = $colocation->categories;
         return view('colocations.depenses.create', compact('colocation', 'categories' ));
     }
 

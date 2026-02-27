@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Categorie extends Model
 {
     use HasFactory;
-    protected $fillable = ['nom', 'user_id'];
+    protected $fillable = ['nom', 'user_id', 'colocation_id'];
 
     public function depenses() : HasMany
     {
@@ -20,6 +20,11 @@ class Categorie extends Model
     public function user() : BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function colocation() : BelongsTo
+    {
+        return $this->belongsTo(Colocation::class);
 
     }
 }

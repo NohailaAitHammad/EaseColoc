@@ -28,7 +28,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('colocations/cancel/{colocation}', [ColocationController::class, 'cancel'])->name('colocations.cancel');
 
     // categories
-    Route::resource('categories', CategorieController::class);
+    Route::resource('colocations.categories', CategorieController::class)->scoped([
+        'categorie' => 'id'
+    ]);
 
     //depenses
     Route::resource('colocations.depenses', DepenseController::class)->scoped([
