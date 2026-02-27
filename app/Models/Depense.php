@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Depense extends Model
 {
     use HasFactory;
-    protected $fillable = ['montant', 'titre', 'categorie_id'];
+    protected $fillable = ['montant', 'title', 'categorie_id', 'colocation_id', 'payeur_id'];
 
     public function categorie() : BelongsTo
     {

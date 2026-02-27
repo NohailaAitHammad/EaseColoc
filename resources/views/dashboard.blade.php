@@ -875,6 +875,31 @@
                 </span>
         </div>
     </div>
+            <div class="grid items-start md:grid-cols-2 gap-8">
+
+                <!-- Card -->
+                @forelse($colocations as $colocation)
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition">
+                    <img src="https://static.vecteezy.com/system/resources/thumbnails/054/561/697/small/house-icon-on-transparent-background-png.png" class="w-full h-1/4 object-cover">
+                    <div class="p-6 ">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-xl font-bold mb-2">{{ $colocation->nom }}</h4>
+                            <p class="text-gray-600 mb-4">{{ $colocation->max_membres }}</p>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-indigo-600 font-bold">{{ $colocation->status }}</span>
+                        </div>
+                        <div class="flex mt-2 space-x-3">
+                            <a href="{{ route('colocations.show', $colocation) }}" class="px-3 py-1  text-xs font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700">Voir Detail</a>
+                            <a href="{{  route('invitations.invite', $colocation)}}" class="px-3 py-3 text-xs font-medium text-gray-700 bg-gray-100 rounded-md dark:bg-gray-700 dark:text-gray-300">Inviter des membres</a>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                    <h1>aucune existes</h1>
+                @endforelse
+            </div>
+
             <div class="p-7 bg-white rounded-lg shadow-xs dark:bg-gray-800">
             <h4 class="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">
                 Membres de la "Coloc Alpha"

@@ -5,15 +5,15 @@
         <div class="w-full max-w-2xl px-8 py-10 bg-white rounded-2xl shadow-lg dark:bg-gray-800">
             <div class="container px-6 mx-auto grid">
                 <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
-                    Nouvelle  Categorie
+                    Modifier  Categorie
                 </h2>
-
                 <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-                    <form action="{{ route('categories.store') }}" method="POST">
+                    <form action="{{ route('categories.update', $categorie)}}" method="POST">
                         @csrf
+                        @method('PUT')
                         <div>
                             <x-input-label for="nom" :value="__('Nom de Categorie')" />
-                            <x-text-input id="nom" class="block mt-1 w-full" type="text" name="nom" :value="old('nom')" required autofocus autocomplete="nom" />
+                            <x-text-input id="nom" class="block mt-1 w-full" type="text" name="nom" :value="$categorie->nom" required autofocus autocomplete="nom" />
                             <x-input-error :messages="$errors->get('nom')" class="mt-2" />
                         </div>
 

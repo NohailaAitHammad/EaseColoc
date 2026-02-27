@@ -18,6 +18,7 @@
 
     </div>
 
+
     <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
         @forelse($colocations as $colocation)
             <div class="flex flex-col p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 border-t-4 border-purple-600 transition-transform hover:scale-105">
@@ -38,6 +39,7 @@
                 </div>
 
                 <div class="mt-auto border-t pt-4 dark:border-gray-700">
+                    @can('view', $colocation)
                     <a href="{{ route('colocations.show', $colocation) }}"
                        class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium leading-5 text-purple-600 transition-colors duration-150 bg-transparent border border-purple-600 rounded-lg hover:bg-purple-600 hover:text-white focus:outline-none focus:shadow-outline-purple"
                     >
@@ -46,9 +48,10 @@
                             <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                         </svg>
                     </a>
+                        @endcan
                 </div>
                 <div class="mt-auto border-t pt-4 dark:border-gray-700">
-                    <a href="{{ route('invitations.create') }}"
+                    <a href="{{ route('invitations.invite', $colocation) }}"
                        class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium leading-5 text-purple-600 transition-colors duration-150 bg-transparent border border-purple-600 rounded-lg hover:bg-purple-600 hover:text-white focus:outline-none focus:shadow-outline-purple"
                     >
                         Inviter des membres

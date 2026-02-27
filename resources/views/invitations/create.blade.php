@@ -6,7 +6,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('invitations.store') }}">
+    <form method="POST" action="{{ route('invitations.stored', $colocation) }}">
         @csrf
 
         <!-- Email Address -->

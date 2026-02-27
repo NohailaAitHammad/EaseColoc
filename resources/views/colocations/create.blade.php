@@ -22,10 +22,13 @@
                         <x-input-error :messages="$errors->get('max_membres')" class="mt-2" />
                     </div>
 
-                    <div class="flex justify-end mt-6">
+                    <div class="flex justify-end gap-3 mt-6">
                         <button type="submit" class="px-10 py-2 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
                             Enregistrer
                         </button>
+                        <a href="{{ route('colocations.index')}}" type="submit" class="px-10 py-2 font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                            Annuler
+                        </a>
                     </div>
                 </form>
             </div>

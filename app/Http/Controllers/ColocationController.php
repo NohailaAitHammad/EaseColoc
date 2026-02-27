@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ColocationRequest;
-use App\Models\Categorie;
 use App\Models\Colocation;
 use App\Models\Membership;
-use Illuminate\Http\CategorieRequest;
+use Illuminate\Auth\Access\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class ColocationController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Colocation::class, 'colocation');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $colocations = Colocation::all();
+        $colocations = auth()->user()->colocations;
         return view('colocations.index', compact('colocations'));
     }
 
@@ -79,12 +84,14 @@ class ColocationController extends Controller
     {
         //
     }
+
     public function cancel(Colocation $colocation)
     {
         if($colocation->owner()->first()->id !== auth()->id()){
             return  back()->with('erreur', 'vous pouverz pas annuler la colocation , acces non authorise');
         }
         $colocation->status = 'cancelled';
+        $colocation->cancelled_at = now();
         $colocation->save();
         return redirect()->route('colocations.index')->with('success', 'Colocation a ete bien annuler');
     }

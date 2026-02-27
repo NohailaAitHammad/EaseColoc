@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('nom');
             $table->enum('status', ['active', 'cancelled'])->default('active');
-            $table->timestamp('cancelled_at')->nullable();
-            $table->integer('max_membres')->default(0);
+            $table->timestamp('cancelled_at');
+            $table->integer('max_membres');
             $table->engine('InnoDB');
             $table->timestamps();
         });

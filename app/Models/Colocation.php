@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Colocation extends Model
 {
     use HasFactory;
-    protected $fillable =['nom', 'max_membre'];
+    protected $fillable =['nom', 'max_membres'];
 
     public function users() : BelongsToMany
     {

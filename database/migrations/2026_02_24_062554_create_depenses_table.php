@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->float('montant')->default(0.0);
             $table->string('title');
-            $table->timestamp('date')->nullable();
+            $table->timestamp('date');
             $table->boolean('is_setled')->default(false);
             $table->foreignId('categorie_id')->constrained('categories')->onDelete('cascade');
             $table->foreignId('colocation_id')->constrained('colocations')->onDelete('cascade');

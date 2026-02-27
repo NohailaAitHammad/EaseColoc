@@ -15,6 +15,7 @@ class CategorieController extends Controller
     public function index()
     {
         $categories = Categorie::all();
+        //dd($categories);
         return view('categories.index', compact('categories'));
     }
 
@@ -32,6 +33,7 @@ class CategorieController extends Controller
     public function store(CategorieRequest $request)
     {
         $validatedCategorie = $request->validated();
+        $validatedCategorie['user_id'] = auth()->id();
         Categorie::create($validatedCategorie);
         return redirect()->route('categories.index')->with("success", 'Catégorie bien cree');
     }
@@ -47,16 +49,20 @@ class CategorieController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Categorie $categorie)
+    public function edit($categorie)
     {
+        //dd($categorie);
+        $categorie = Categorie::find($categorie);
         return view('categories.edit', compact('categorie'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(CategorieRequest $request, Categorie $categorie)
+    public function update(CategorieRequest $request,  $categorie)
     {
+
+        $categorie = Categorie::find($categorie);
         $validatedCategorie = $request->validated();
         $categorie->save($validatedCategorie);
         return redirect()->route('categories.index')->with('success', 'Catégorie Bien modifier');
@@ -65,8 +71,9 @@ class CategorieController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Categorie $categorie)
+    public function destroy($categorie)
     {
+        $categorie = Categorie::find($categorie);
         $categorie->delete();
         return redirect()->route('categories.index')->with('success', 'Catégorie bien supprimer');
     }
