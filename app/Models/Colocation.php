@@ -33,4 +33,8 @@ class Colocation extends Model
     {
         return $this->hasMany(Categorie::class);
     }
+    public function memberships()
+    {
+        return $this->hasMany(Membership::class);
+    }
 }

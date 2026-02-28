@@ -7,7 +7,7 @@
         </h2>
         <div class="flex items-center gap-2 mb-4">
             <div class=" border-t border-slate-100 text-left">
-                <a href="{{ route('colocations.index') }}"
+                <a href="{{ route('colocations.show', $colocation) }}"
                    class="inline-flex items-center justify-center w-full sm:w-auto px-6 py-1 border border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('colocations.depenses', DepenseController::class)->scoped([
         'depense' => 'id'
     ]);
+    Route::get('colocations/{colocation}/depenses/{depense}/{user}', [DepenseController::class, 'payer'])->name('colocations.depenses.payer');
 
 
     // invitation

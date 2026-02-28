@@ -32,6 +32,7 @@
         </div>
     </div>
 
+
     <div class="grid gap-6 mb-8 md:grid-cols-3">
         <div class="md:col-span-2 space-y-6">
             <div class="w-full overflow-hidden rounded-lg shadow-xs bg-white dark:bg-gray-800 p-4">
@@ -49,6 +50,7 @@
                         </thead>
                         <tbody class="divide-y dark:divide-gray-700">
                         @foreach($colocation->depenses as $depense)
+
                             <tr class="text-gray-700 dark:text-gray-400">
                                 <td class="px-4 py-3 text-sm">
                                     <p class="font-semibold"> {{$depense->title}} </p>
@@ -106,7 +108,7 @@
                         @endforeach
                         </tbody>
                     </table>
-                    {{ $colocation->$depense->links() }}
+
                 </div>
             </div>
         </div>
@@ -114,35 +116,64 @@
         <div class="space-y-6">
             <div class="p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 border-l-4 border-orange-500">
                 <h4 class="mb-2 font-semibold text-gray-600 dark:text-gray-300">Qui doit à qui ?</h4>
-                <div class="text-sm text-gray-600 dark:text-gray-400 italic">
-                    Aucun remboursement en attente.
-                </div>
+                @forelse ($colocation->depenses as $depens)
+                    @foreach ($depens->users as $key => $value)
+                        <div class="flex justify-between items-center mb-3">
+                            <p>{{ $value->firstName}}  ->  {{$depens->payeur->firstName}} =>  {{ number_format($value->pivot->montant_du, 2, ',', '.')  }}</p>
+                            @if($value->pivot->status === 'pending')
+                                @can('payee', $depense)
+                                <a href="{{ route('colocations.depenses.payer',[ $colocation, $depense, auth()->id()]) }}"
+                                   class=" px-2 py-2 text-sm font-medium leading-5 text-purple-600 transition-colors duration-150 bg-transparent border border-purple-600 rounded-lg hover:bg-purple-600 hover:text-white focus:outline-none focus:shadow-outline-purple"
+                                >Marquer payer</a>
+                                @endcan
+                            @else
+                            <p class="px-2 py-2 text-sm font-medium leading-5 text-purple-600 transition-colors duration-150 bg-transparent border border-purple-600 rounded-lg hover:bg-purple-600 hover:text-white focus:outline-none focus:shadow-outline-purple">{{strtoupper($value->pivot->status )}}</p>
+                            @endif
+                        </div>
+
+
+                    @endforeach
+                @empty
+                    <div class="text-sm text-gray-600 dark:text-gray-400 italic">
+                        Aucun remboursement en attente.
+                    </div>
+                @endforelse
+
+
             </div>
 
             <div class="p-4 bg-gray-900 rounded-lg shadow-xs text-white">
                 <div class="flex justify-between items-center mb-4">
-                    <h4 class="font-semibold uppercase text-xs tracking-wider">Membres de la coloc [cite: 28]</h4>
+                    <h4 class="font-semibold uppercase text-xs tracking-wider">Membres de la coloc</h4>
                     <span class="text-xs bg-gray-700 px-2 py-1 rounded">ACTIFS</span>
                 </div>
                 <div class="space-y-4">
-                    {{--@foreach($colocation->memberships as $membership)--}}
+                    @foreach($memebres as $memebre)
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 rounded bg-gray-700 flex items-center justify-center text-xs font-bold">
-                                     substr(membership->user->firstName, 0, 1)  [cite: 55]
+                                    {{substr( $memebre->user->firstName, 0, 1)}}
                                 </div>
                                 <div>
-                                    <p class="text-sm font-medium"> membership->user->firstName  [cite: 30, 55]</p>
-                                    <p class="text-xs text-orange-400">👑  membership->role  [cite: 33, 45]</p>
+                                    <p class="text-sm font-medium"> {{$memebre->user->firstName}}</p>
+                                    @if($memebre->role  === 'owner')
+                                    <p class="text-xs text-orange-400">👑  {{ $memebre->role }}</p>
+                                    @endif
+                                    @if($memebre->role  === 'membre')
+                                        <p class="text-xs text-orange-400">  {{ $memebre->role }}</p>
+                                    @endif
                                 </div>
                             </div>
-                            <span class="text-sm font-bold text-green-400"> membership->user->reputation_score  [cite: 64]</span>
+                            <span class="text-sm font-bold text-green-400">{{ $memebre->user->reputation_score }}  </span>
                         </div>
+                    @endforeach
 
                 </div>
-                <a href="{{ route('invitations.invite', $colocation) }}" class="w-full mt-6 py-2 text-xs font-semibold bg-gray-800 border border-gray-700 rounded hover:bg-gray-700 transition-colors">
+                <div class="mt-5">
+                <a href="{{ route('invitations.invite', $colocation) }}" class="w-full  py-2 text-xs font-semibold bg-gray-800 border border-gray-700 rounded hover:bg-gray-700 transition-colors">
                     + Inviter un membre
                 </a>
+                </div>
             </div>
         </div>
     </div>

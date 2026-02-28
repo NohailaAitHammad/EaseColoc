@@ -40,8 +40,15 @@ class DepensePolicy
     public function update(User $user, Depense $depense): bool
     {
         return  $depense->colocation->status === 'active' &&  $depense->is_setled === 0 && $depense->colocation->users()->where('user_id', $user->id)->exists()
-            && $depense->payeur->id === $user->id;
+            && $depense->payeur->id === $user->id && $depense->users()->wherePivot('status', '!=', 'pending');
     }
+
+    public function payee(User $user, Depense $depense): bool
+    {
+        return  $depense->colocation->status === 'active' &&  $depense->is_setled === 0 && $depense->colocation->users()->where('user_id', $user->id)->exists()
+            && $depense->payeur->id !== $user->id  && $depense->users()->wherePivot('status', '!=', 'pending');
+    }
+
 
     /**
      * Determine whether the user can delete the model.

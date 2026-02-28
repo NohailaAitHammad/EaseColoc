@@ -16,7 +16,7 @@ return new class extends Migration
         });
 
         Schema::table('categories', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
         });
 
     }
@@ -26,8 +26,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('_invitation', function (Blueprint $table) {
-            //
+        Schema::table('invitations', function (Blueprint $table) {
+            $table->string('token');
+        });
+        Schema::table('categories', function (Blueprint $table) {
+            $table->foreignId('user_id')->constrained('users');
         });
     }
 };

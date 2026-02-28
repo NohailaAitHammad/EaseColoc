@@ -40,7 +40,7 @@
 
                 <div class="mt-auto border-t pt-4 dark:border-gray-700">
                     @can('view', $colocation)
-                    <a href="{{ route('colocations.show', $colocation) }}"
+                    <a href="{{ route('colocations.show', $colocation),  }}"
                        class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium leading-5 text-purple-600 transition-colors duration-150 bg-transparent border border-purple-600 rounded-lg hover:bg-purple-600 hover:text-white focus:outline-none focus:shadow-outline-purple"
                     >
                         Gérer la Colocation

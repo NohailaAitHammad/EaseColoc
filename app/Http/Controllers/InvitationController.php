@@ -33,7 +33,7 @@ class InvitationController extends Controller
     public function invite(Colocation $colocation)
     {
         //dd($colocation);
-        $this->authorize('create', [Invitation::class, $colocation]);
+        $this->authorize('invite', [Invitation::class, $colocation]);
         return view('invitations.create', compact('colocation'));
     }
 

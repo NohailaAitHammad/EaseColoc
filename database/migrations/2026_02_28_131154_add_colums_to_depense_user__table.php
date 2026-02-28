@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('categories', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+        Schema::table('depense_user', function (Blueprint $table) {
+            $table->float('montant_du')->default(0.0);
+            $table->float('montant_paye')->default(0.0);
         });
     }
 
@@ -21,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('categorie_', function (Blueprint $table) {
-            //
+        Schema::table('depense_user', function (Blueprint $table) {
+            $table->dropColumn('montant_du');
+            $table->dropColumn('montant_paye');
         });
     }
 };

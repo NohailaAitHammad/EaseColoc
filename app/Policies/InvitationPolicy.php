@@ -30,7 +30,13 @@ class InvitationPolicy
      */
     public function invite(User $user, Colocation $colocation): bool
     {
-        return $colocation->users()->where('user_id', $user->id)->wherePivot('role', 'owner')->exists() && $colocation->max_membres < $colocation->users()->count() && $colocation->status === 'active';
+        return $colocation->memberships()
+            ->where('user_id', $user->id)
+            ->where('role', 'owner')
+            ->whereNull('left_at')
+            ->exists() && $colocation->memberships()
+                ->whereNull('left_at')
+                ->with('user')->count() < $colocation->max_membres && $colocation->status === 'active';
     }
 
 

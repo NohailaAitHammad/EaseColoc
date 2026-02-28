@@ -37,10 +37,11 @@ class ColocationPolicy
      */
     public function update(User $user, Colocation $colocation): bool
     {
-        return $colocation->users()
+        return $colocation->memberships()
             ->where('user_id', $user->id)
-            ->wherePivot('role', 'owner')
-            ->exists();
+            ->where('role', 'owner')
+            ->whereNull('left_at')
+            ->exists() && $colocation->status === 'active';
     }
 
     /**

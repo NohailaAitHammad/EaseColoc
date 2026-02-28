@@ -6,6 +6,8 @@ use App\Http\Requests\DepenseeRequest;
 use App\Models\Categorie;
 use App\Models\Colocation;
 use App\Models\Depense;
+use App\Models\depense_user;
+use App\Models\User;
 
 
 class DepenseController extends Controller
@@ -15,7 +17,6 @@ class DepenseController extends Controller
      */
     public function index(Colocation $colocation)
     {
-
         $depenses = $colocation->depenses;
         //dd($depenses);
         return view('colocations.depenses.index', compact('colocation','depenses'));
@@ -26,7 +27,6 @@ class DepenseController extends Controller
      */
     public function create(Colocation $colocation)
     {
-        dd($colocation->owner->id);
         $this->authorize('create', [Depense::class, $colocation]);
        $categories = $colocation->categories;
         return view('colocations.depenses.create', compact('colocation', 'categories' ));
@@ -46,20 +46,39 @@ class DepenseController extends Controller
         $validatedDepense['colocation_id'] = $colocation->id;
         $validatedDepense['payeur_id'] = auth()->id();
         $validatedDepense['date'] = now();
+        $validatedDepense['is_setled'] = 0 ;
 
-        $colocation->depenses()->create($validatedDepense);
-        return redirect()->route('colocations.show', $colocation)->with('success', 'Depense est bien cree');
+        $depense  = $colocation->depenses()->create($validatedDepense);
+        // depense non paye par les autres memebres
+        //dd($depense->wasRecentlyCreated);
+        $depense->calculDpenses();
+
+
+        //dd($colocation->depenses()->users);
+        return redirect()->route('colocations.show', $colocation )->with('success', 'Depense est bien cree');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Colocation $colocation, Depense $depense)
+    public function payer( Colocation $colocation, Depense $depense, User $user)
     {
-        if($depense->colocation !== $colocation){
+        //dd($user);
+        $this->authorize('payee', [Depense::class, $depense]);
+        if($depense->colocation->id !== $colocation->id){
             return back()->with('error', "Cette depense n'appartient pas a cette colocation");
         }
-        return view('colocations.depenses.show', compact('colocation','depense'));
+        if($depense->is_setled){
+            return back()->with('error', 'Depense est deja rembourser');
+        }
+        $depense->users()->updateExistingPivot($user->id, [
+            'status' => 'payee'
+        ]);
+        $memebres = $colocation->memberships()
+            ->whereNull('left_at')
+            ->with('user')
+            ->get();
+        return view('colocations.show', compact('colocation', 'memebres'));
     }
 
     /**
@@ -67,15 +86,19 @@ class DepenseController extends Controller
      */
     public function edit(Colocation $colocation, Depense $depense)
     {
-
         $this->authorize('update',$depense);
 
         if($depense->colocation->id !== $colocation->id){
             return back()->with('error', "Cette depense n'appartient pas a cette colocation");
         }
+
+        if($depense->users()->wherePivot('status','payee')->exists()){
+            return back()->with('error', 'Depense en cours de paiement ');
+        }
         if($depense->is_setled){
             return back()->with('error', 'Depense est deja rembourser');
         }
+
         return view('colocations.depenses.edit', compact('colocation','depense'));
     }
 
@@ -88,10 +111,15 @@ class DepenseController extends Controller
         $depense->title = $validatedDepense['title'];
         $depense->montant = $validatedDepense['montant'];
         $depense->categorie_id = $validatedDepense['categorie_id'];
-        $colocation->depenses()->save($depense);
-        $depense->save($validatedDepense);
+
+        $depens = $colocation->depenses()->save($depense);
+        //$depense->save($validatedDepense);
+        //dd($depense->wasRecentlyCreated);
+        $depense->calculDpenses();
+
         return redirect()->route('colocations.show', compact('colocation'))->with('success', 'Depense est bien moifier');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -101,6 +129,10 @@ class DepenseController extends Controller
         $this->authorize('delete', $depense);
         if($depense->colocation->id !== $colocation->id){
             return back()->with('error', "Cette depense n'appartient pas a cette colocation");
+        }
+
+        if($depense->users()->wherePivot('status','payee')->exists()){
+            return back()->with('error', 'Depense en cours de paiement ');
         }
         if($depense->is_setled){
             return back()->with('error', 'Depense est deja rembourser');

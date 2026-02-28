@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ColocationRequest;
 use App\Models\Colocation;
+use App\Models\Invitation;
 use App\Models\Membership;
 use Illuminate\Auth\Access\Gate;
 use Illuminate\Support\Facades\Auth;
@@ -58,7 +59,15 @@ class ColocationController extends Controller
      */
     public function show(Colocation $colocation)
     {
-        return view('colocations.show', compact('colocation'));
+        //dd($colocation->depenses);
+
+        $memebres = $colocation->memberships()
+            ->whereNull('left_at')
+            ->with('user')
+            ->get();
+
+
+        return view('colocations.show', compact('colocation', 'memebres'));
     }
 
     /**
