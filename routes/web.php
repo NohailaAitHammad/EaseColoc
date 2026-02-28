@@ -5,16 +5,12 @@ use App\Http\Controllers\ColocationController;
 use App\Http\Controllers\DepenseController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SiteController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', [SiteController::class, 'home'])->name('home');
 
-Route::get('/dashboard', function () {
-    $colocations = auth()->user()->colocations;
-    return view('dashboard', compact('colocations'));
-})->middleware(['auth'])->name('dashboard');
+Route::get('/dashboard',[SiteController::class, 'dashbord'])->middleware(['auth'])->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
 

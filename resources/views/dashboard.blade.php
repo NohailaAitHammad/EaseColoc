@@ -880,18 +880,21 @@
                 <!-- Card -->
                 @forelse($colocations as $colocation)
                 <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition">
-                    <img src="https://static.vecteezy.com/system/resources/thumbnails/054/561/697/small/house-icon-on-transparent-background-png.png" class="w-full h-1/4 object-cover">
                     <div class="p-6 ">
                         <div class="flex justify-between items-center">
                             <h4 class="text-xl font-bold mb-2">{{ $colocation->nom }}</h4>
-                            <p class="text-gray-600 mb-4">{{ $colocation->max_membres }}</p>
+                            <p class="text-gray-600 mb-4">Max : {{ $colocation->max_membres }}</p>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-indigo-600 font-bold">{{ $colocation->status }}</span>
+                            <span class="text-indigo-600 font-bold">STATUS : {{ $colocation->status }}</span>
                         </div>
                         <div class="flex mt-2 space-x-3">
+                            @can('view', $colocation)
                             <a href="{{ route('colocations.show', $colocation) }}" class="px-3 py-1  text-xs font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700">Voir Detail</a>
+                            @endcan
+                            @can('invite', $colocation)
                             <a href="{{  route('invitations.invite', $colocation)}}" class="px-3 py-3 text-xs font-medium text-gray-700 bg-gray-100 rounded-md dark:bg-gray-700 dark:text-gray-300">Inviter des membres</a>
+                            @endcan
                         </div>
                     </div>
                 </div>
@@ -900,27 +903,7 @@
                 @endforelse
             </div>
 
-            <div class="p-7 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-            <h4 class="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">
-                Membres de la "Coloc Alpha"
-            </h4>
-            <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-                <div class="flex flex-col items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 border-b-4 border-purple-600">
-                    <h5 class="mb-1 text-sm font-bold text-gray-900 dark:text-white">Jean Dupont</h5>
-                    <span class="px-2 py-1 text-xs font-semibold leading-tight text-purple-700 bg-purple-100 rounded-full dark:bg-purple-700 dark:text-purple-100 mb-3">
-      Owner
-    </span>
-                    <div class="flex mt-2 space-x-3">
-                        <a class="px-3 py-1  text-xs font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700">Voir Profil</a>
-                        <a class="px-3 py-3 text-xs font-medium text-gray-700 bg-gray-100 rounded-md dark:bg-gray-700 dark:text-gray-300">Solde</a>
-                    </div>
-                </div>
-            </div>
-                <h4 class="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">
-                    Aucun membre dans la colocation
-                </h4>
 
-            </div>
         </div>
     </main>
 @endsection

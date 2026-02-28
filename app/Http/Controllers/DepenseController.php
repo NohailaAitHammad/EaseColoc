@@ -15,6 +15,7 @@ class DepenseController extends Controller
      */
     public function index(Colocation $colocation)
     {
+
         $depenses = $colocation->depenses;
         //dd($depenses);
         return view('colocations.depenses.index', compact('colocation','depenses'));
@@ -25,6 +26,8 @@ class DepenseController extends Controller
      */
     public function create(Colocation $colocation)
     {
+        dd($colocation->owner->id);
+        $this->authorize('create', [Depense::class, $colocation]);
        $categories = $colocation->categories;
         return view('colocations.depenses.create', compact('colocation', 'categories' ));
     }
@@ -64,7 +67,10 @@ class DepenseController extends Controller
      */
     public function edit(Colocation $colocation, Depense $depense)
     {
-        if($depense->colocation !== $colocation){
+
+        $this->authorize('update',$depense);
+
+        if($depense->colocation->id !== $colocation->id){
             return back()->with('error', "Cette depense n'appartient pas a cette colocation");
         }
         if($depense->is_setled){
@@ -78,9 +84,13 @@ class DepenseController extends Controller
      */
     public function update(DepenseeRequest $request,Colocation $colocation,Depense $depense)
     {
-        $validatedDepense = $request->validaed();
+        $validatedDepense = $request->validated();
+        $depense->title = $validatedDepense['title'];
+        $depense->montant = $validatedDepense['montant'];
+        $depense->categorie_id = $validatedDepense['categorie_id'];
+        $colocation->depenses()->save($depense);
         $depense->save($validatedDepense);
-        return redirect()->route('colocations.depenses.index', compact('colocation'))->with('success', 'Depense est bien moifier');
+        return redirect()->route('colocations.show', compact('colocation'))->with('success', 'Depense est bien moifier');
     }
 
     /**
@@ -88,13 +98,14 @@ class DepenseController extends Controller
      */
     public function destroy(Colocation $colocation, Depense $depense)
     {
-        if($depense->colocation !== $colocation){
+        $this->authorize('delete', $depense);
+        if($depense->colocation->id !== $colocation->id){
             return back()->with('error', "Cette depense n'appartient pas a cette colocation");
         }
         if($depense->is_setled){
             return back()->with('error', 'Depense est deja rembourser');
         }
-        $depense->delete();
-        return redirect()->route('colocations.depenses.index', compact('colocation'))->with('success', 'Depense est bien supprimer');
+        $colocation->depenses()->where('id', $depense->id)->delete();
+        return redirect()->route('colocations.show', compact('colocation'))->with('success', 'Depense est bien supprimer');
     }
 }

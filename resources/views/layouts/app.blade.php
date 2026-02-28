@@ -293,6 +293,22 @@
             </div>
         </header>
         <main class="h-full overflow-y-auto">
+            @if(session()->has('success'))
+                <div class="flex justify-center mt-5">
+                    <div class="bg-green-100 border border-green-400 text-black-700 px-4 py-3 rounded relative w-11/12" role="alert">
+                        <strong class="font-bold">Bravo !! </strong>
+                        <span class="block sm:inline">{{ session('success') }}</span>
+                    </div>
+                </div>
+            @endif
+            @if(session()->has('error'))
+                <div class="flex justify-center mt-5">
+                    <div class="bg-red-100 border border-red-600 text-black-700 px-4 py-3 rounded relative w-11/12" >
+                        <strong class="font-bold">ops !! </strong>
+                        <span class="block sm:inline">{{ session('error') }}</span>
+                    </div>
+                </div>
+            @endif
             @yield('content')
 
         </main>

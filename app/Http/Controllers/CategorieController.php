@@ -20,8 +20,8 @@ class CategorieController extends Controller
      */
     public function index(Colocation $colocation)
     {
+        $this->authorize('viewAny',[Categorie::class, $colocation]);
         $categories = $colocation->categories;
-        //dd($categories);
         return view('colocations.categories.index', compact('colocation','categories'));
     }
 

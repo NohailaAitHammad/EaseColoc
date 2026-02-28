@@ -26,12 +26,14 @@ class InvitationController extends Controller
      */
     public function create()
     {
+
         return view('invitations.create');
     }
 
     public function invite(Colocation $colocation)
     {
         //dd($colocation);
+        $this->authorize('create', [Invitation::class, $colocation]);
         return view('invitations.create', compact('colocation'));
     }
 
@@ -79,15 +81,26 @@ class InvitationController extends Controller
         if($user->email !== $payload->email){
             abort(403, "Email mismatch");
         }
+        ;
+        if($user->colocations->where('status', 'active')->count() > 0){
+            abort(403, 'Vous etes deja dans une colocation active');
+        }
+
         $colocation = Colocation::find($payload->colocation_id);
+
+        if($colocation->status !== 'active'){
+            abort(403,'Colocation est deja annuler');
+        }
+
+        if($colocation->users()->count()>= $colocation->max_membres){
+            abort(403,'la colocation est deja sature');
+        }
 
         $colocation->users()->attach($user->id, [
             'role' => 'membre',
             'joined_at' => now()
         ]);
 
-
-        // supprimer invitation
         Invitation::where('token', $token)->delete();
 
         return redirect()->route('colocations.index')->with('success', 'Vous avez rejoint la colocation !');
@@ -96,7 +109,7 @@ class InvitationController extends Controller
     public function decline(Request $request, $token)
     {
         $token = urldecode($token);
-        // juste supprimer invitation
+
         Invitation::where('token', $token)->delete();
 
         return redirect()->route('dashboard')->with('info', 'Invitation déclinée');
