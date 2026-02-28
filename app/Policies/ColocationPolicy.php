@@ -60,7 +60,7 @@ class ColocationPolicy
         return $colocation->users()
                 ->where('user_id', $user->id)
                 ->wherePivot('role', 'owner')
-                ->exists() &&  $colocation->users()->wherePivot('role', 'membre')->count() === 0;
+                ->exists() &&  $colocation->users()->wherePivot('role', 'membre')->count() === 0 ;
     }
     //invitation policy
     public function invite(User $user, Colocation $colocation): bool

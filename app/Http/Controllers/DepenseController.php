@@ -64,21 +64,35 @@ class DepenseController extends Controller
     public function payer( Colocation $colocation, Depense $depense, User $user)
     {
         //dd($user);
+
         $this->authorize('payee', [Depense::class, $depense]);
         if($depense->colocation->id !== $colocation->id){
             return back()->with('error', "Cette depense n'appartient pas a cette colocation");
         }
-        if($depense->is_setled){
-            return back()->with('error', 'Depense est deja rembourser');
+
+        $pivot = $depense->users()->where('user_id', auth()->id())->first()?->pivot;
+        if (!$pivot) {
+            return back()->with('error', "Vous n'êtes pas concerné par cette dépense.");
         }
+        if($pivot->status === 'payee'){
+            return back()->with('error', 'Vous avez déjà payé cette dépense.');
+        }
+
         $depense->users()->updateExistingPivot($user->id, [
-            'status' => 'payee'
+            'status' => 'payee',
+            'montant_paye' => $pivot->montant_du,
         ]);
+        $encoreNonPaye = $depense->users()->wherePivotColumn('montant_paye', '<', 'montant_du')->exists();
+        if(!$encoreNonPaye){
+            $depense->update([
+                'is_setled' => true,
+            ]);
+        }
         $memebres = $colocation->memberships()
             ->whereNull('left_at')
             ->with('user')
             ->get();
-        return view('colocations.show', compact('colocation', 'memebres'));
+        return view('colocations.show', compact('colocation', 'memebres'))->with('success', 'Paiement effectué avec succès.');
     }
 
     /**

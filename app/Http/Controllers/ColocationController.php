@@ -6,6 +6,7 @@ use App\Http\Requests\ColocationRequest;
 use App\Models\Colocation;
 use App\Models\Invitation;
 use App\Models\Membership;
+use App\Models\User;
 use Illuminate\Auth\Access\Gate;
 use Illuminate\Support\Facades\Auth;
 
@@ -60,11 +61,11 @@ class ColocationController extends Controller
     public function show(Colocation $colocation)
     {
         //dd($colocation->depenses);
-
         $memebres = $colocation->memberships()
             ->whereNull('left_at')
             ->with('user')
             ->get();
+
 
 
         return view('colocations.show', compact('colocation', 'memebres'));
@@ -99,9 +100,35 @@ class ColocationController extends Controller
         if($colocation->owner()->first()->id !== auth()->id()){
             return  back()->with('erreur', 'vous pouverz pas annuler la colocation , acces non authorise');
         }
+        $depensesNonPaye = $colocation->depenses()->whereHas('users', function ($query){
+            $query->wherePivot('status', 'pending');
+        })->exists();
+
+        if($depensesNonPaye){
+            return back()->with('error', "Impossible d’annuler la colocation : des dépenses ne sont pas encore payées.'");
+        }
         $colocation->status = 'cancelled';
         $colocation->cancelled_at = now();
         $colocation->save();
         return redirect()->route('colocations.index')->with('success', 'Colocation a ete bien annuler');
+    }
+
+    public function quiter(Colocation $colocation, User $user){
+        if($colocation->status === 'cancelled'){
+            return back()->with('error', "Colocation est deja annuler");
+        }
+
+        if($colocation->owner()->first()->id === $user->id){
+            return back()->with('error', "Vous etes owner de la colocation il faut transferer votre role a un autre affin de pouvoir quiter");
+        }
+
+        $depensesNonPaye = $colocation->depenses()->whereHas('users', function ($query){
+            $query->wherePivot('status', 'pending');
+        })->exists();
+
+        if($depensesNonPaye){
+            $user->reputation_score++;
+        }
+
     }
 }

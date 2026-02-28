@@ -17,6 +17,11 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
+     * @var int|mixed
+     */
+    public mixed $reputation_score;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>

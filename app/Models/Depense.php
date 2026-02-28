@@ -55,12 +55,6 @@ class Depense extends Model
                         }else{
                         abort(403, 'Depense en cours de paiement ');
                     }
-//                $depense_user = new depense_user();
-//                $depense_user->user_id = $memebre->user_id;
-//                $depense_user->status = 'pending';
-//                $depense_user->depense_id = $this->id;
-//                $depense_user->save();
-//                $d = $depense_user;
                 }
             }
 
