@@ -32,6 +32,7 @@ class CategoriePolicy
     {
         return $colocation->users()
                 ->where('user_id', $user->id)
+                ->wherePivot('role', 'owner')
                 ->exists()
             && $colocation->status === 'active';
     }

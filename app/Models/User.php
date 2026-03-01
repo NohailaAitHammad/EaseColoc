@@ -16,10 +16,7 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * @var int|mixed
-     */
-    public mixed $reputation_score;
+
 
     /**
      * The attributes that are mass assignable.

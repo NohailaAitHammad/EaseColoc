@@ -8,6 +8,7 @@ use App\Models\Invitation;
 use App\Models\Membership;
 use App\Models\User;
 use Illuminate\Auth\Access\Gate;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ColocationController extends Controller
@@ -65,9 +66,6 @@ class ColocationController extends Controller
             ->whereNull('left_at')
             ->with('user')
             ->get();
-
-
-
         return view('colocations.show', compact('colocation', 'memebres'));
     }
 
@@ -113,22 +111,105 @@ class ColocationController extends Controller
         return redirect()->route('colocations.index')->with('success', 'Colocation a ete bien annuler');
     }
 
-    public function quiter(Colocation $colocation, User $user){
-        if($colocation->status === 'cancelled'){
+    public function quiter(Colocation $colocation)
+    {
+        $user = auth()->user();
+
+        if ($colocation->status === 'cancelled') {
             return back()->with('error', "Colocation est deja annuler");
         }
 
-        if($colocation->owner()->first()->id === $user->id){
-            return back()->with('error', "Vous etes owner de la colocation il faut transferer votre role a un autre affin de pouvoir quiter");
+        if ($colocation->owner()->first()->id === $user->id) {
+            return back()->with('error', "Vous etes owner, transferer le role avant de quitter.");
         }
 
-        $depensesNonPaye = $colocation->depenses()->whereHas('users', function ($query){
-            $query->wherePivot('status', 'pending');
-        })->exists();
-
-        if($depensesNonPaye){
-            $user->reputation_score++;
+        if (!$colocation->users->contains($user->id)) {
+            return back()->with('error', "Vous n'etes pas membre.");
         }
 
+        $hasDebt = false;
+
+        foreach ($colocation->depenses as $depense) {
+
+            $pivot = $depense->users()
+                ->where('user_id', $user->id)
+                ->first();
+
+            if ($pivot && $pivot->pivot->status === 'pending') {
+                $hasDebt = true;
+                break;
+            }
+        }
+
+        // Reputation
+        if ($hasDebt) {
+            $user->decrement('reputation_score');
+        } else {
+            $user->increment('reputation_score');
+        }
+
+        // Suppression pivot depenses
+        foreach ($colocation->depenses as $depense) {
+            $depense->users()->detach($user->id);
+        }
+
+        // Suppression membre
+        $colocation->users()->detach($user->id);
+
+        $colocation->refresh();
+
+        $colocation->recalculerDepenses();
+
+        return redirect()
+            ->route('colocations.index')
+            ->with('success', 'Vous avez quitté la colocation');
     }
+
+    public function retirer(Colocation $colocation, User $user)
+    {
+        $owner = auth()->user();
+
+        // check owner
+        if ($colocation->owner()->first()->id !== $owner->id) {
+            return back()->with('error', 'Non autorisé');
+        }
+
+        if ($user->id === $owner->id) {
+            return back()->with('error', 'Impossible de retirer le owner');
+        }
+
+        $hasDebt = false;
+
+        foreach ($colocation->depenses as $depense) {
+
+            $pivot = $depense->users()
+                ->where('user_id', $user->id)
+                ->first();
+
+            if ($pivot && $pivot->pivot->status === 'pending') {
+
+                $hasDebt = true;
+
+                // ✅ transfert dette vers owner
+                $depense->users()->updateExistingPivot(
+                    $user->id,
+                    ['user_id' => $owner->id]
+                );
+            }
+        }
+
+        // reputation
+//        if ($hasDebt) {
+//            $user->decrement('reputation_score');
+//        } else {
+//            $user->increment('reputation_score');
+//        }
+
+        // retirer membre
+        $colocation->users()->detach($user->id);
+
+        return back()->with('success', 'Membre retiré');
+    }
+
+
 }

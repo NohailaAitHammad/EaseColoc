@@ -286,13 +286,24 @@
                                         <span>Déconnexion</span>
                                     </a>
                                 </li>
+                                <li>
+
+                                </li>
                             </ul>
+
+
                         </template>
                     </li>
                 </ul>
             </div>
         </header>
         <main class="h-full overflow-y-auto">
+            <div class="p-4 bg-gray-900 rounded-lg shadow-xs text-white">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="font-semibold uppercase text-xs tracking-wider">Mon Score Reputation</h4>
+                    <span class="text-md-center bg-gray-700 px-2 py-1 rounded">{{ auth()->user()->reputation_score }}</span>
+                </div>
+            </div>
             @if(session()->has('success'))
                 <div class="flex justify-center mt-5">
                     <div class="bg-green-100 border border-green-400 text-black-700 px-4 py-3 rounded relative w-11/12" role="alert">

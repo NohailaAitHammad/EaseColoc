@@ -37,4 +37,44 @@ class Colocation extends Model
     {
         return $this->hasMany(Membership::class);
     }
+
+    public function recalculerDepenses()
+    {
+        $members = $this->users; // members ba9yin
+        $count = $members->count();
+
+        if ($count == 0) {
+            return;
+        }
+
+        foreach ($this->depenses as $depense) {
+
+            $newPart = $depense->montant / $count;
+
+            foreach ($members as $member) {
+
+                $pivot = $depense->users()
+                    ->where('user_id', $member->id)
+                    ->first();
+
+                if ($pivot) {
+
+                    $depense->users()->updateExistingPivot(
+                        $member->id,
+                        ['montant_du' => $newPart]
+                    );
+
+                } else {
+
+                    // ila kan chi membre jdod w ma kaynach pivot
+                    $depense->users()->attach($member->id, [
+                        'montant_du' => $newPart,
+                        'status' => 'pending'
+                    ]);
+                }
+            }
+        }
+    }
+
+
 }

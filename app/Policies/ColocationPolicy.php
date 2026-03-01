@@ -21,7 +21,9 @@ class ColocationPolicy
      */
     public function view(User $user, Colocation $colocation): bool
     {
-        return $colocation->status === 'active';
+        return $colocation->memberships()
+            ->where('user_id', $user->id)
+            ->whereNull('left_at') && $colocation->status === 'active' ;
     }
 
     /**

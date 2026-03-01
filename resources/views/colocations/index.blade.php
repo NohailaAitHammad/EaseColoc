@@ -39,8 +39,8 @@
                 </div>
 
                 <div class="mt-auto border-t pt-4 dark:border-gray-700">
-                    @can('view', $colocation)
-                    <a href="{{ route('colocations.show', $colocation),  }}"
+
+                        <a href="{{ route('colocations.show', $colocation) }}"
                        class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium leading-5 text-purple-600 transition-colors duration-150 bg-transparent border border-purple-600 rounded-lg hover:bg-purple-600 hover:text-white focus:outline-none focus:shadow-outline-purple"
                     >
                         Gérer la Colocation
@@ -48,7 +48,7 @@
                             <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                         </svg>
                     </a>
-                        @endcan
+
                 </div>
                 @can('invite', $colocation)
                 <div class="mt-auto border-t pt-4 dark:border-gray-700">

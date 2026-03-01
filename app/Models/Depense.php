@@ -41,7 +41,7 @@ class Depense extends Model
 
             $memebres = $this->colocation->users;
             foreach ($memebres as $memebre) {
-                if ($memebre->id !== $this->payeur->id) {
+                if ($memebre->id !== $this->payeur->id ) {
                     if($this->wasRecentlyCreated) {
                         $this->users()->attach($memebre->id, [
                             'montant_du' => $this->montant / $memebres->count(),

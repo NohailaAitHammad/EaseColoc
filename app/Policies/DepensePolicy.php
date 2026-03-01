@@ -46,7 +46,7 @@ class DepensePolicy
     public function payee(User $user, Depense $depense): bool
     {
         return  $depense->colocation->status === 'active' &&  $depense->is_setled === 0 && $depense->colocation->users()->where('user_id', $user->id)->exists()
-            && $depense->payeur->id !== $user->id  && $depense->users()->wherePivot('status', '!=', 'pending');
+            && $depense->payeur->id !== $user->id  && $depense->users()->wherePivot('status', '===', 'pending');
     }
 
 

@@ -5,7 +5,7 @@
 
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center my-6 gap-4">
 
-            <div>
+{{ dd($colocation->depenses()->sum('montant')) }}            <div>
                 <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200 uppercase">
                     {{$colocation->nom }}
                 </h2>
@@ -19,20 +19,33 @@
             </div>
 
             <div class="  flex gap-2">
+                <div class="flex justify-end mb-4">
+                    <a href="{{ route('colocations.depenses.stats', $colocation) }}"
+                       class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow">
+                        Voir les statistiques
+                    </a>
+                </div>
                 <a href="{{ route('colocations.depenses.create', $colocation) }}"
                    class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700">
                     + Nouvelle dépense
                 </a>
+                @can('create', $colocation)
                 <a href="{{ route('colocations.categories.create', $colocation) }}"
                    class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700">
                     + Nouvelle category
                 </a>
+                @endcan
                 @can('update', $colocation)
                     <a href="{{ route('colocations.cancel', $colocation) }}"
                        class="px-4 py-2 text-sm font-medium text-red-600 border border-red-600 rounded-lg hover:bg-red-600 hover:text-white">
                         Annuler la colocation
                     </a>
                 @endcan
+                <form action="{{ route('colocations.quiter', $colocation) }}" method="POST">
+                    @csrf
+                  <button type="submit"  class="px-4 py-2 text-sm font-medium text-red-600 border border-red-600 rounded-lg hover:bg-red-600 hover:text-white"
+                      >Quiter</button>
+                </form>
             </div>
         </div>
 
@@ -127,15 +140,17 @@
                             <div class="flex justify-between items-center mb-3">
                                 <p>{{ $value->firstName}} -> {{$depens->payeur->firstName}}
                                     => {{ number_format($value->pivot->montant_du, 2, ',', '.')  }}</p>
-                                @if($value->pivot->status === 'pending')
                                     @can('payee', $depense)
                                         <a href="{{ route('colocations.depenses.payer',[ $colocation, $depense, auth()->id()]) }}"
                                            class=" px-2 py-2 text-sm font-medium leading-5 text-purple-600 transition-colors duration-150 bg-transparent border border-purple-600 rounded-lg hover:bg-purple-600 hover:text-white focus:outline-none focus:shadow-outline-purple"
                                         >Marquer payer</a>
                                     @endcan
+                                @if($value->pivot->status === 'payee')
+                                    ✅
                                 @else
-                                    <p class="px-2 py-2 text-sm font-medium leading-5 text-purple-600 transition-colors duration-150 bg-transparent border border-purple-600 rounded-lg hover:bg-purple-600 hover:text-white focus:outline-none focus:shadow-outline-purple">{{strtoupper($value->pivot->status )}}</p>
+                                    ❌
                                 @endif
+
                             </div>
 
                         @endforeach
@@ -169,6 +184,28 @@
                                         @if($memebre->role  === 'membre')
                                             <p class="text-xs text-orange-400">  {{ $memebre->role }}</p>
                                         @endif
+                                        <form
+                                            action="{{ route('colocations.retirer',[$colocation, $memebre->user->id]) }}"
+                                            method="POST">
+                                            @csrf
+                                            <button
+                                                class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
+                                                aria-label="Delete" type="submit"
+                                            >
+                                                <svg
+                                                    class="w-5 h-5"
+                                                    aria-hidden="true"
+                                                    fill="currentColor"
+                                                    viewBox="0 0 20 20"
+                                                >
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                        clip-rule="evenodd"
+                                                    ></path>
+                                                </svg>
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                                 <span
