@@ -14,7 +14,7 @@ class CategoriePolicy
      */
     public function viewAny(User $user, Colocation $colocation): bool
     {
-        return $colocation->status === 'active';
+        return $colocation->status === 'active' && !$user->is_banned;
     }
 
     /**
@@ -22,7 +22,7 @@ class CategoriePolicy
      */
     public function view(User $user, Categorie $categorie): bool
     {
-        return true;
+        return !$user->is_banned ;
     }
 
     /**
@@ -34,7 +34,7 @@ class CategoriePolicy
                 ->where('user_id', $user->id)
                 ->wherePivot('role', 'owner')
                 ->exists()
-            && $colocation->status === 'active';
+            && $colocation->status === 'active' && !$user->is_banned;
     }
 
     /**
@@ -42,7 +42,7 @@ class CategoriePolicy
      */
     public function update(User $user, Categorie $categorie): bool
     {
-        return $user->id === $categorie->user_id;
+        return $user->id === $categorie->user_id && !$user->is_banned;
     }
 
     /**
@@ -50,7 +50,7 @@ class CategoriePolicy
      */
     public function delete(User $user, Categorie $categorie): bool
     {
-        return $user->id === $categorie->user_id;
+        return $user->id === $categorie->user_id && !$user->is_banned;
     }
 
     /**

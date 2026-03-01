@@ -17,7 +17,7 @@
                     <div>Colocations</div>
                 </div>
                 <div class="bg-yellow-100 p-4 rounded text-center">
-                    <div class="text-xl font-bold">{{ $stats['expenses'] }} MAD</div>
+                    <div class="text-xl font-bold">{{ $stats['depenses'] }} MAD</div>
                     <div>Dépenses Totales</div>
                 </div>
             </div>
@@ -33,6 +33,7 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                 <tr class="bg-gray-200">
+                    <th class="p-2">Prenom</th>
                     <th class="p-2">Nom</th>
                     <th class="p-2">Email</th>
                     <th class="p-2">Status</th>
@@ -42,7 +43,8 @@
                 <tbody>
                 @foreach($users as $user)
                     <tr class="border-b">
-                        <td class="p-2">{{ $user->name }}</td>
+                        <td class="p-2">{{ $user->firstName }}</td>
+                        <td class="p-2">{{ $user->lastName }}</td>
                         <td class="p-2">{{ $user->email }}</td>
                         <td class="p-2">
                             @if($user->is_banned === 1)
@@ -52,12 +54,20 @@
                             @endif
                         </td>
                         <td class="p-2">
-                            <form action="{{ route('admin.toggleBan', $user->id) }}" method="POST">
+                            <form action="{{ route('admin.toggleBan', $user) }}" method="POST">
                                 @csrf
+                                @if($user->is_banned === 1)
                                 <button type="submit"
-                                        class="{{ $user->banned ? 'bg-green-500' : 'bg-red-500' }} text-white px-3 py-1 rounded">
-                                    {{ $user->is_banned ? 'Débannir' : 'Bannir' }}
+                                        class="bg-green-500 text-white px-3 py-1 rounded">
+                                    Débannir
                                 </button>
+                                @else
+                                    <button type="submit"
+                                            class="bg-red-500  text-white px-3 py-1 rounded">
+                                        Bannir
+                                    </button>
+                                    @endif
+
                             </form>
                         </td>
                     </tr>

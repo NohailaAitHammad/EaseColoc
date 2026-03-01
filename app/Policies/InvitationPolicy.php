@@ -36,7 +36,7 @@ class InvitationPolicy
             ->whereNull('left_at')
             ->exists() && $colocation->memberships()
                 ->whereNull('left_at')
-                ->with('user')->count() < $colocation->max_membres && $colocation->status === 'active';
+                ->with('user')->count() < $colocation->max_membres && $colocation->status === 'active' && !$user->is_banned;
     }
 
 
@@ -45,7 +45,7 @@ class InvitationPolicy
      */
     public function update(User $user, Invitation $invitation): bool
     {
-        return false;
+        return  !$user->is_banned;
     }
 
     /**
@@ -53,7 +53,7 @@ class InvitationPolicy
      */
     public function delete(User $user, Invitation $invitation): bool
     {
-        return false;
+        return  !$user->is_banned;
     }
 
     /**

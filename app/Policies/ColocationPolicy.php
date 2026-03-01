@@ -23,7 +23,7 @@ class ColocationPolicy
     {
         return $colocation->memberships()
             ->where('user_id', $user->id)
-            ->whereNull('left_at') && $colocation->status === 'active' ;
+            ->whereNull('left_at') && $colocation->status === 'active'  && !$user->is_banned;
     }
 
     /**
@@ -31,7 +31,7 @@ class ColocationPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return  !$user->is_banned;
     }
 
     /**
@@ -43,7 +43,7 @@ class ColocationPolicy
             ->where('user_id', $user->id)
             ->where('role', 'owner')
             ->whereNull('left_at')
-            ->exists() && $colocation->status === 'active';
+            ->exists() && $colocation->status === 'active' && !$user->is_banned;
     }
 
     /**
@@ -54,12 +54,12 @@ class ColocationPolicy
         return $colocation->users()
         ->where('user_id', $user->id)
         ->wherePivot('role', 'owner')
-        ->exists() && $colocation->status === 'cancelled';
+        ->exists() && $colocation->status === 'cancelled' && !$user->is_banned;
     }
 
     public function cancel(User $user, Colocation $colocation): bool
     {
-        return $colocation->users()
+        return  !$user->is_banned && $colocation->users()
                 ->where('user_id', $user->id)
                 ->wherePivot('role', 'owner')
                 ->exists() &&  $colocation->users()->wherePivot('role', 'membre')->count() === 0 ;
@@ -71,7 +71,7 @@ class ColocationPolicy
                 ->where('user_id', $user->id)
                 ->wherePivot('role', 'owner')
                 ->exists() &&  $colocation->users()->wherePivot('role', 'membre')->count() < $colocation->max_membres
-                && $colocation->status === 'active';
+                && $colocation->status === 'active' && !$user->is_banned;
 
     }
 

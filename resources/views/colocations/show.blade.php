@@ -5,7 +5,7 @@
 
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center my-6 gap-4">
 
-{{ dd($colocation->depenses()->sum('montant')) }}            <div>
+          <div>
                 <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200 uppercase">
                     {{$colocation->nom }}
                 </h2>

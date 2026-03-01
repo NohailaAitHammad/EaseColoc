@@ -51,10 +51,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('invitations/{token}/decline', [InvitationController::class, 'decline'])
         ->name('invitations.decline');
 
+    Route::get('/admin',[SiteController::class, 'index'])->name('admin.index');
+    Route::post('admin//user/{user}/ban', [SiteController::class, 'toggleBan'])->name('admin.toggleBan');
+
+
 });
 
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('admin/panel', [AdminController::class, 'index'])->name('admin.index');
-    Route::post('admin//user/{user}/ban', [AdminController::class, 'toggleBan'])->name('admin.toggleBan');
-});
+
+
 require __DIR__.'/auth.php';
