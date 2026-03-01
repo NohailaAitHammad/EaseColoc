@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\CategorieRequest;
+use http\Client\Request;
 
 class RoleController extends Controller
 {
@@ -49,7 +49,7 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CategorieRequest $request, string $id)
+    public function update(Request $request, string $id)
     {
         //
     }
