@@ -20,10 +20,6 @@
 
             <div class="  flex gap-2">
                 <div class="flex justify-end mb-4">
-                    <a href="{{ route('colocations.depenses.stats', $colocation) }}"
-                       class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow">
-                        Voir les statistiques
-                    </a>
                 </div>
                 <a href="{{ route('colocations.depenses.create', $colocation) }}"
                    class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700">

@@ -98,13 +98,15 @@ class ColocationController extends Controller
         if($colocation->owner()->first()->id !== auth()->id()){
             return  back()->with('erreur', 'vous pouverz pas annuler la colocation , acces non authorise');
         }
-        $depensesNonPaye = $colocation->depenses()->whereHas('users', function ($query){
-            $query->wherePivot('status', 'pending');
-        })->exists();
-
-        if($depensesNonPaye){
-            return back()->with('error', "Impossible d’annuler la colocation : des dépenses ne sont pas encore payées.'");
-        }
+//        $depensesNonPaye = $colocation->depenses()
+//            ->whereHas('users', function ($query) {
+//                $query->wherePivot('status', 'pending');
+//            })
+//            ->exists();
+//
+//        if($depensesNonPaye){
+//            return back()->with('error', "Impossible d’annuler la colocation : des dépenses ne sont pas encore payées.'");
+//        }
         $colocation->status = 'cancelled';
         $colocation->cancelled_at = now();
         $colocation->save();
