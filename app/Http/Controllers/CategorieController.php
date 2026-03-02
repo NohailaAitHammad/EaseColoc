@@ -42,8 +42,6 @@ class CategorieController extends Controller
 
         $validatedCategorie = $request->validated();
         $validatedCategorie['user_id'] = auth()->id();
-        //Categorie::create($validatedCategorie);
-        //$colocation->categories()->create($validatedCategorie);
         $categorie = $colocation->categories()->create($validatedCategorie);
         return redirect()->route('colocations.categories.index', $colocation)->with("success", 'Catégorie bien cree');
     }

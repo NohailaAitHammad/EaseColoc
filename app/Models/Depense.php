@@ -48,13 +48,14 @@ class Depense extends Model
                             'montant_paye' => 0,
                             'status' => 'pending',
                         ]);
-                    } else if(!$this->users()->wherePivot('status', '=', 'pending')) {
+                    } else {
                         $this->users()->updateExistingPivot($memebre->id, [
                             'montant_du' => $this->montant / $memebres->count(),
                         ]);
-                        }else{
-                        abort(403, 'Depense en cours de paiement ');
-                    }
+                        }
+                    //else{
+//                        abort(403, 'Depense en cours de paiement ');
+//                    }
                 }
             }
 

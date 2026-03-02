@@ -32,7 +32,6 @@ class InvitationController extends Controller
 
     public function invite(Colocation $colocation)
     {
-        //dd($colocation);
         $this->authorize('invite', [Invitation::class, $colocation]);
         return view('invitations.create', compact('colocation'));
     }
@@ -46,18 +45,18 @@ class InvitationController extends Controller
         $validatedInvitation["status"] = 'pending';
         $validatedInvitation['user_id'] = auth()->id();
 
-       $c = [
+       $infoInvitation = [
            'email' => $validatedInvitation['email'],
             'colocation_id' => $colocation->id,
        ];
-        $payload = json_encode($c, JSON_THROW_ON_ERROR);
+        $payload = json_encode($infoInvitation, JSON_THROW_ON_ERROR);
         $token = Crypt::encryptString($payload);
         $token = urlencode($token);
         $validatedInvitation['token'] = $token;
         $mailer = new InvitationAuColocation($validatedInvitation['email'], $validatedInvitation['token']);
         Mail::to('aythmadnhylt@gmail.com')->send($mailer);
         Invitation::create($validatedInvitation);
-        return redirect()->route('colocations.index');
+        return redirect()->route('colocations.index')->with('success', "Invitation envoyer a vec succes token: $token");
     }
 
 
@@ -66,7 +65,8 @@ class InvitationController extends Controller
      */
     public function show($token)
     {
-        $token = urldecode($token); // decode URL safe
+        // decode URL safe
+        $token = urldecode($token);
         $payload = Crypt::decryptString($token);
 
         return view('invitations.show', compact('payload', 'token'));

@@ -141,19 +141,19 @@ class ColocationController extends Controller
             }
         }
 
-        // Reputation
+        /* reputation */
         if ($hasDebt) {
             $user->decrement('reputation_score');
         } else {
             $user->increment('reputation_score');
         }
 
-        // Suppression pivot depenses
+        /* suppression pivot depenses */
         foreach ($colocation->depenses as $depense) {
             $depense->users()->detach($user->id);
         }
 
-        // Suppression membre
+        /* Suppression membre */
         $colocation->users()->detach($user->id);
 
         $colocation->refresh();
@@ -169,7 +169,7 @@ class ColocationController extends Controller
     {
         $owner = auth()->user();
 
-        // check owner
+        /* check owner */
         if ($colocation->owner()->first()->id !== $owner->id) {
             return back()->with('error', 'Non autorisé');
         }
@@ -190,22 +190,14 @@ class ColocationController extends Controller
 
                 $hasDebt = true;
 
-                // ✅ transfert dette vers owner
+                /* transfert dette vers owner */
                 $depense->users()->updateExistingPivot(
                     $user->id,
                     ['user_id' => $owner->id]
                 );
             }
         }
-
-        // reputation
-//        if ($hasDebt) {
-//            $user->decrement('reputation_score');
-//        } else {
-//            $user->increment('reputation_score');
-//        }
-
-        // retirer membre
+        /* retirer membre */
         $colocation->users()->detach($user->id);
 
         return back()->with('success', 'Membre retiré');

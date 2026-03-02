@@ -19,9 +19,9 @@ class DepenseController extends Controller
     public function index(Colocation $colocation)
     {
         $depenses = $colocation->depenses;
-        //dd($depenses);
         return view('colocations.depenses.index', compact('colocation','depenses'));
     }
+
     public function show(Colocation $colocation, Depense $depense)
     {
         return view('colocations.depenses.show', compact('colocation', 'depense'));
@@ -54,51 +54,14 @@ class DepenseController extends Controller
         $validatedDepense['is_setled'] = 0 ;
 
         $depense  = $colocation->depenses()->create($validatedDepense);
-        // depense non paye par les autres memebres
-        //dd($depense->wasRecentlyCreated);
         $depense->calculDpenses();
 
-
-        //dd($colocation->depenses()->users);
         return redirect()->route('colocations.show', $colocation )->with('success', 'Depense est bien cree');
     }
 
     /**
      * Display the specified resource.
      */
-//    public function payer( Colocation $colocation, Depense $depense, User $user)
-//    {
-//        //dd($user);
-//
-//        $this->authorize('payee', [Depense::class, $depense]);
-//        if($depense->colocation->id !== $colocation->id){
-//            return back()->with('error', "Cette depense n'appartient pas a cette colocation");
-//        }
-//
-//        $pivot = $depense->users()->where('user_id', auth()->id())->first()?->pivot;
-//        if (!$pivot) {
-//            return back()->with('error', "Vous n'êtes pas concerné par cette dépense.");
-//        }
-//        if($pivot->status === 'payee'){
-//            return back()->with('error', 'Vous avez déjà payé cette dépense.');
-//        }
-//
-//        $depense->users()->updateExistingPivot($user->id, [
-//            'status' => 'payee',
-//            'montant_paye' => $pivot->montant_du,
-//        ]);
-//        $encoreNonPaye = $depense->users()->wherePivotColumn('montant_paye', '<', 'montant_du')->exists();
-//        if(!$encoreNonPaye){
-//            $depense->update([
-//                'is_setled' => true,
-//            ]);
-//        }
-//        $memebres = $colocation->memberships()
-//            ->whereNull('left_at')
-//            ->with('user')
-//            ->get();
-//        return view('colocations.show', compact('colocation', 'memebres'))->with('success', 'Paiement effectué avec succès.');
-//    }
 
     public function payer(Colocation $colocation, Depense $depense, User $user)
     {
@@ -174,9 +137,8 @@ class DepenseController extends Controller
         $depense->montant = $validatedDepense['montant'];
         $depense->categorie_id = $validatedDepense['categorie_id'];
 
-        $depens = $colocation->depenses()->save($depense);
-        //$depense->save($validatedDepense);
-        //dd($depense->wasRecentlyCreated);
+        $colocation->depenses()->save($depense);
+
         $depense->calculDpenses();
 
         return redirect()->route('colocations.show', compact('colocation'))->with('success', 'Depense est bien moifier');
@@ -205,59 +167,29 @@ class DepenseController extends Controller
 
 //    public function stats(Colocation $colocation, Request $request)
 //    {
-//        // Filtrage par mois si demandé
 //        $query = $colocation->depenses();
 //
-//        if($request->filled('month') && $request->filled('year')){
-//            $query->whereYear('date', $request->year)
-//                ->whereMonth('date', $request->month);
+//        /* Filtrage par mois (input type="month") */
+//        if($request->filled('month')){
+//            [$year, $month] = explode('-', $request->month);
+//            $query->whereYear('date', $year)
+//                ->whereMonth('date', $month);
 //        }
 //
 //        $depenses = $query->get();
 //
-//        // Stats par catégorie
-//        $statsCategorie = $depenses->groupBy('categorie_id')->map(function($items){
-//            return $items->sum('montant');
+//        /* Stats par catégorie avec nom */
+//        $statsCategorie = $depenses->groupBy('categorie_id')->mapWithKeys(function($items, $catId) use ($colocation) {
+//            $catName = $colocation->categories->find($catId)?->name ?? 'Autre';
+//            return [$catName => $items->sum('montant')];
 //        });
 //
-//        // Stats mensuelles (total par mois)
-//        $statsMensuelles = $colocation->depenses()
-//            ->get()
-//            ->groupBy(function($item){
-//                return $item->date->format('Y-m'); // ex: 2026-03
-//            })
-//            ->map(function($items){
-//                return $items->sum('montant');
-//            });
+//        // Stats mensuelles (filtrées ou toutes selon filtre)
+//        $statsMensuelles = $depenses->groupBy(function($item){
+//            return $item->date->format('Y-m');
+//        })->map(fn($items) => $items->sum('montant'));
 //
-//        return view('colocations.depenses.stats', compact('colocation', 'depenses', 'statsCategorie', 'statsMensuelles'));
+//        return view('colocations.depenses.index', compact('colocation', 'depenses', 'statsCategorie', 'statsMensuelles'));
 //    }
-
-    public function stats(Colocation $colocation, Request $request)
-    {
-        $query = $colocation->depenses();
-
-        // Filtrage par mois (input type="month")
-        if($request->filled('month')){
-            [$year, $month] = explode('-', $request->month);
-            $query->whereYear('date', $year)
-                ->whereMonth('date', $month);
-        }
-
-        $depenses = $query->get();
-
-        // Stats par catégorie avec nom
-        $statsCategorie = $depenses->groupBy('categorie_id')->mapWithKeys(function($items, $catId) use ($colocation) {
-            $catName = $colocation->categories->find($catId)?->name ?? 'Autre';
-            return [$catName => $items->sum('montant')];
-        });
-
-        // Stats mensuelles (filtrées ou toutes selon filtre)
-        $statsMensuelles = $depenses->groupBy(function($item){
-            return $item->date->format('Y-m');
-        })->map(fn($items) => $items->sum('montant'));
-
-        return view('colocations.depenses.index', compact('colocation', 'depenses', 'statsCategorie', 'statsMensuelles'));
-    }
 
 }
